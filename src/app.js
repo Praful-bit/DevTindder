@@ -2,28 +2,28 @@ const express = require("express");
 
 
 const app = express()
-
-app.use('/hello/0/2',(req, res)=>{
-    res.send("Avra ka dabra gili gili chuuuu !!")
-})
-
-
-app.use('/hello/2',(req, res)=>{
-    res.send("Avra ka dabra !!")
-})
-
-
-app.use('/hello',(req, res)=>{
-    res.send("Hello from the Hello")
-})
-
-
+//this will match all the http methods api calls to /test
 app.use('/test',(req, res)=>{
     res.send("Hello from the test server")
 })
 
-app.use('/',(req, res)=>{  //wild card (any thing when match after the / it gives response hello from the server deshboard)
-    res.send("Hello from the server deshboard ")
+app.post("/user", (req,res)=>{
+    res.send("hello Your data save in data base")
+})
+
+//This will match only get http api 
+app.get("/user",(req,res)=>{
+    res.send({firstName : "Praful",
+        LastName: "Gahlot"
+    })
+})
+
+app.put('/user',(req,res)=>{
+    res.send("update your data successfully!!")
+})
+
+app.delete('/user',(req,res)=>{
+    res.send("Delete successfully!!")
 })
 
 app.listen(7777,()=>{
