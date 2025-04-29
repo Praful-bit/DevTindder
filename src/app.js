@@ -1,62 +1,33 @@
 const express = require("express");
 
 const app = express();
-// : means dynamic routing 
-app.get('/user/:userId/:name/:password/:age', (req, res) => {
-    console.log(req.params) // query & params
-    res.send({
-        firstName: "Praful",
-        lastName: "Gahlot"
-    });
-});
 
+//app.user('/routes', rh,[rh2.rh3],rh4,rh5)
 
+app.get(
+  "/user",[
+  (req, res, next) => {
+    console.log("hey here no any responce")
+    next()
+    // res.send("Responce !!");
+  },
+  (req, res, next) => {
+    console.log("here is 2 responce")
+    // res.send("hey Responce 2!");
+    next()
+  }],
+  (req, res, next) => {
+    console.log("here is 3 responce")
+    // res.send("hey Responce 3!");
+    next()
+  },
+  (req, res, next) => {
+    console.log("here is 4 responce")
+    res.send("hey Responce 4!");
+    next()
+  }
+);
 
-// that rgax work like .* means any thing in starting but in end is fly ex:- dregonfly 
-// app.get(/.*fly$/, (req, res) => {
-//     res.send({
-//         firstName: "Praful",
-//         lastName: "Gahlot"
-//     });
-// });
-
-
-// /ac /abc
-// app.get('/ab?c', (req, res) => {
-//     res.send({
-//         firstName: "Praful",
-//         lastName: "Gahlot"
-//     });
-// });
-
-//  /abcd /abcbcbcbcd
-// app.get('/a(bc)+d', (req, res) => {
-//     res.send({
-//         firstName: "Praful",
-//         lastName: "Gahlot"
-//     });
-// });
-
-
-// /abbbbbc  & /abc
-// app.get('/ab+c', (req, res) => {
-//     res.send({
-//         firstName: "Praful",
-//         lastName: "Gahlot"
-//     });
-// });
-
-
-//  /abcd /abPrafulcd also work
-// app.get('/ab*cd', (req, res) => {
-//     res.send({
-//         firstName: "Praful",
-//         lastName: "Gahlot"
-//     });
-// });
-
-
-
-app.listen(7777, () => {
-    console.log("Server is listening on the port 7777"); // Fixed here
+app.listen(3000, () => {
+  console.log("All things are ok!!");
 });
