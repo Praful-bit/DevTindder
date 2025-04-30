@@ -7,24 +7,20 @@ const app = express();
 
 //app.user('/routes', rh,[rh2.rh3],rh4,rh5)
 
-app.get(
-    "/user",
-    (req, res, next) => {
-      console.log("hey here 2 responce")
-      res.send("Responce 2!!");
-    },
-  );
+app.get("/admin/getAllData", (req, res, next) => {
+  //logic of check if the request is authorized
+  const token = "xyz";
+  const isAdminAuthorized = token === "xyz1222";
+  if (isAdminAuthorized) {
+    res.send("All Data sent");
+  }else{
+    res.status(401).send("unAuthorized request")
+  }
+});
 
-app.get(
-  "/user",
-  (req, res, next) => {
-    console.log("hey here 1 responce")
-    // res.send("Responce !!");
-    next()
-  },
-);
-
-
+app.get("/admin/deleteUser", (req, res) => {
+  res.send("Deleted a user");
+});
 
 app.listen(3000, () => {
   console.log("All things are ok!!");
