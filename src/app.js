@@ -2,17 +2,22 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
+
+app.use(express.json())
 app.post("/signup", async (req, res) => {
-  const userObj = {
-    firstName: "Praful",
-    lastName: "gahlot",
-    emailId: "prafulgahlot00@gmail.com",
-    password: "praful7",
-    age: 24,
-    gender: "Male",
-  };
+  // console.log(req.body)
+ 
+  // const userObj = {
+  //   firstName: "Ayush",
+  //   lastName: "Motta",
+  //   emailId: "ayush00@gmail.com",
+  //   password: "ayush15",
+  //   age: 23,
+  //   gender: "Gay",
+  // };
+
   // creating a new instance of the user modle
-  const user = new User(userObj);
+  const user = new User(req.body);
   try {
     await user.save();
     res.send("User added successfully");
