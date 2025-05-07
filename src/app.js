@@ -2,6 +2,7 @@ const express = require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
+const user = require("./models/user");
 
 app.use(express.json());
 app.post("/signup", async (req, res) => {
@@ -37,6 +38,31 @@ app.get("/feed", async (req, res) => {
   }
 });
 
+app.delete("/user", async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    // {_id:userId}
+    const user = await User.findByIdAndDelete(userId);
+    res.send("user Deleted successfully");
+  } catch (error) {
+    res.status(400).send("Error fetching the user: " + error.message);
+  }
+});
+
+app.patch("/signup", async (req, res) => {
+  const userId = req.body.userId;
+  const data = req.body;
+  try {
+    const user = await User.findByIdAndUpdate(userId, data, {
+      returnDocument: "before",
+      runValidators: true,
+    });
+    console.log(user);
+    res.send("user updated successfully..!");
+  } catch (error) {
+    res.status(400).send("Error fetching the user: " + error.message);
+  }
+});
 
 connectDB()
   .then(() => {
