@@ -4,9 +4,11 @@ const app = express();
 const User = require("./models/user");
 const { validationSignupData } = require("./utils/validation/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
-
+app.use(cookieParser());
 app.post("/signup", async (req, res) => {
   try {
     // console.log(req.body)
@@ -55,6 +57,12 @@ app.post("/login", async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (isPasswordValid) {
+      //JWT token how to make
+      const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$790");
+      console.log(token);
+      // cookies
+      res.cookie("token", token);
+
       res.send("Login Successfully....!");
     } else {
       throw new Error("Password is not valid");
@@ -62,6 +70,18 @@ app.post("/login", async (req, res) => {
   } catch (error) {
     res.status(400).send("ERROR :" + error.message);
   }
+});
+
+app.get("/profile", async (req, res) => {
+  const cookies = req.cookies;
+  const { token } = cookies;
+  //validate token
+  const deCodedMessage = await jwt.verify(token, "DEV@TINDER$790");
+  console.log(deCodedMessage)
+  const {_id}  = deCodedMessage;
+  console.log("Logged in user is : " + _id);
+  console.log(cookies);
+  res.send("Profile...!");
 });
 
 app.get("/feed", async (req, res) => {
