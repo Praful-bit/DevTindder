@@ -6,6 +6,7 @@ const { validationSignupData } = require("./utils/validation/validation");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
+const { userAuth } = require("./utils/middleWares/auth");
 
 app.use(express.json());
 app.use(cookieParser());
@@ -72,70 +73,32 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile",userAuth, async (req, res) => {
   try {
-    const cookies = req.cookies;
-    const { token } = cookies;
-    if (!token) {
-      throw new Error("Token not Valid...!");
+    const user = req.user;
+    if(!user){
+     throw new Error("user does not exist");
     }
-    //validate token
-    const deCodedMessage = await jwt.verify(token, "DEV@TINDER$790");
-    console.log(deCodedMessage);
-    const { _id } = deCodedMessage;
-    console.log("Logged in user is : " + _id);
-    const user = await User.findById(_id);
-    res.send(user);
+    res.send(user)
   } catch (error) {
     res.status(400).send("ERROR: " + error.message);
   }
 });
 
-app.get("/feed", async (req, res) => {
+app.get("/feed", userAuth, async (req, res) => {
   try {
     //findOne use for one data
-    const user = await User.find({});
-    if (!user) return res.status(404).send("User not found");
+    const user = req.user;
+    if (!user) {
+      throw new Error("user does not exist");
+    }
     res.send(user);
   } catch (error) {
     res.status(400).send("Error fetching the user: " + error.message);
   }
 });
 
-app.delete("/user", async (req, res) => {
-  const userId = req.body.userId;
-  try {
-    // {_id:userId}
-    const user = await User.findByIdAndDelete(userId);
-    res.send("user Deleted successfully");
-  } catch (error) {
-    res.status(400).send("Error fetching the user: " + error.message);
-  }
-});
 
-app.patch("/user/:userId", async (req, res) => {
-  const userId = req.params?.userId;
-  const data = req.body;
-
-  try {
-    const ALLOWED_UPDATES = ["about", "gender", "age", "skills"];
-
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      ALLOWED_UPDATES.includes(k)
-    );
-    if (!isUpdateAllowed) {
-      throw new Error("update is not allowed");
-    }
-    const user = await User.findByIdAndUpdate(userId, data, {
-      returnDocument: "before",
-      runValidators: true,
-    });
-    console.log(user);
-    res.send("user updated successfully..!");
-  } catch (error) {
-    res.status(400).send("Error fetching the user: " + error.message);
-  }
-});
 
 connectDB()
   .then(() => {
