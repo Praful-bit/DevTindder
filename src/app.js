@@ -73,15 +73,22 @@ app.post("/login", async (req, res) => {
 });
 
 app.get("/profile", async (req, res) => {
-  const cookies = req.cookies;
-  const { token } = cookies;
-  //validate token
-  const deCodedMessage = await jwt.verify(token, "DEV@TINDER$790");
-  console.log(deCodedMessage)
-  const {_id}  = deCodedMessage;
-  console.log("Logged in user is : " + _id);
-  console.log(cookies);
-  res.send("Profile...!");
+  try {
+    const cookies = req.cookies;
+    const { token } = cookies;
+    if (!token) {
+      throw new Error("Token not Valid...!");
+    }
+    //validate token
+    const deCodedMessage = await jwt.verify(token, "DEV@TINDER$790");
+    console.log(deCodedMessage);
+    const { _id } = deCodedMessage;
+    console.log("Logged in user is : " + _id);
+    const user = await User.findById(_id);
+    res.send(user);
+  } catch (error) {
+    res.status(400).send("ERROR: " + error.message);
+  }
 });
 
 app.get("/feed", async (req, res) => {
