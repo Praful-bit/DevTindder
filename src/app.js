@@ -59,7 +59,7 @@ app.post("/login", async (req, res) => {
 
     if (isPasswordValid) {
       //JWT token how to make
-      const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$790");
+      const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$790", {expiresIn:"1d"});
       console.log(token);
       // cookies
       res.cookie("token", token);
@@ -98,7 +98,18 @@ app.get("/feed", userAuth, async (req, res) => {
   }
 });
 
-
+app.post("/sendRequest",userAuth,(req,res)=>{
+   try {
+    //findOne use for one data
+    const user = req.user;
+    if (!user) {
+      throw new Error("user does not exist");
+    }
+    res.send(user);
+  } catch (error) {
+    res.status(400).send("Error fetching the user: " + error.message);
+  }
+})
 
 connectDB()
   .then(() => {
