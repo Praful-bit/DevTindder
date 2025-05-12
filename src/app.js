@@ -55,14 +55,16 @@ app.post("/login", async (req, res) => {
     if (!user) {
       throw new Error("Email Id is not Present in DB..!");
     }
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password)
 
     if (isPasswordValid) {
       //JWT token how to make
-      const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$790", {expiresIn:"1d"});
-      console.log(token);
+      const token = await user.getJWT();
+
       // cookies
-      res.cookie("token", token, {expires: new Date(Date.now() + 8 * 3600000)});
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
 
       res.send("Login Successfully....!");
     } else {
@@ -73,13 +75,13 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile",userAuth, async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    if(!user){
-     throw new Error("user does not exist");
+    if (!user) {
+      throw new Error("user does not exist");
     }
-    res.send(user)
+    res.send(user);
   } catch (error) {
     res.status(400).send("ERROR: " + error.message);
   }
@@ -98,8 +100,8 @@ app.get("/feed", userAuth, async (req, res) => {
   }
 });
 
-app.post("/sendRequest",userAuth,(req,res)=>{
-   try {
+app.post("/sendRequest", userAuth, (req, res) => {
+  try {
     //findOne use for one data
     const user = req.user;
     if (!user) {
@@ -109,7 +111,7 @@ app.post("/sendRequest",userAuth,(req,res)=>{
   } catch (error) {
     res.status(400).send("Error fetching the user: " + error.message);
   }
-})
+});
 
 connectDB()
   .then(() => {
