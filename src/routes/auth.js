@@ -4,7 +4,6 @@ const User = require("../models/user");
 const { validationSignupData } = require("../utils/validation/validation");
 const bcrypt = require("bcrypt");
 
-
 authRouter.post("/signup", async (req, res) => {
   try {
     // console.log(req.body)
@@ -50,7 +49,7 @@ authRouter.post("/login", async (req, res) => {
     if (!user) {
       throw new Error("Email Id is not Present in DB..!");
     }
-    const isPasswordValid = await user.validatePassword(password)
+    const isPasswordValid = await user.validatePassword(password);
 
     if (isPasswordValid) {
       //JWT token how to make
@@ -65,6 +64,15 @@ authRouter.post("/login", async (req, res) => {
     } else {
       throw new Error("Password is not valid");
     }
+  } catch (error) {
+    res.status(400).send("ERROR :" + error.message);
+  }
+});
+
+authRouter.post("/logout", async (req, res) => {
+  try {
+    res.cookie("token", null, { expires: new Date(Date.now())});
+    res.send("LogOut successfully...!!")
   } catch (error) {
     res.status(400).send("ERROR :" + error.message);
   }
