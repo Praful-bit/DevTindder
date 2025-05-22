@@ -8,6 +8,7 @@ const userSchema = mongoose.Schema(
     firstName: {
       type: String,
       required: true,
+      index:true,
       minLength: 4,
       maxlength: 25,
     },
@@ -58,6 +59,7 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+userSchema.index({firstName:1,gender:1})
 userSchema.methods.getJWT = async function () {
   const user = this;
   const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$790", {

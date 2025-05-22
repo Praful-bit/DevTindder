@@ -20,4 +20,24 @@ const ValidationForProfileEdit = (req) => {
   return isAllowedUpdate;
 };
 
-module.exports = { validationSignupData, ValidationForProfileEdit };
+const validatePasswordUpdate = (req) => {
+  const allowedFields = ["password"];
+  const bodyKeys = Object.keys(req.body);
+
+  // Ensure only 'password' is present
+  const isOnlyPassword = bodyKeys.length === 1 && allowedFields.includes(bodyKeys[0]);
+  if (!isOnlyPassword) {
+    throw new Error("Only password field is allowed.");
+  }
+
+  const { password } = req.body;
+
+  // Check strong password
+  if (!validator.isStrongPassword(password)) {
+    throw new Error("Please enter a strong password..!");
+  }
+
+  return true;
+};
+
+module.exports = { validationSignupData, ValidationForProfileEdit, validatePasswordUpdate };
