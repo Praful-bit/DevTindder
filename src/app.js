@@ -4,21 +4,18 @@ const app = express();
 
 const cookieParser = require("cookie-parser");
 
-
-const authRouter = require("../src/routes/auth")
-const feedRouter = require("../src/routes/feed")
-const profileRouter = require("../src/routes/profile")
-const requestRouter = require("./routes/request")
+const authRouter = require("../src/routes/auth");
+const profileRouter = require("../src/routes/profile");
+const requestRouter = require("./routes/request");
+const userRequest = require("./routes/user");
 
 app.use(express.json());
 app.use(cookieParser());
 
-
-
-app.use("/",authRouter)
-app.use("/",feedRouter)
-app.use("/",profileRouter)
-app.use("/",requestRouter)
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRequest);
 
 connectDB()
   .then(() => {
