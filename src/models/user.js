@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
     firstName: {
       type: String,
       required: true,
-      index:true,
+      index: true,
       minLength: 4,
       maxlength: 25,
     },
@@ -35,9 +35,9 @@ const userSchema = mongoose.Schema(
         }
       },
     },
-    age: {
-      type: Number,
-      min: 18,
+    dob: {
+      type: Date,
+      required: true,
     },
     gender: {
       type: String,
@@ -54,12 +54,36 @@ const userSchema = mongoose.Schema(
     skills: {
       type: [String],
     },
+    imageUrl: {
+      type: String,
+      validate(value) {
+        if (value && !validator.isURL(value)) {
+          throw new Error("Invalid Image URL: " + value);
+        }
+      },
+    },
+    linkDinUrl: {
+      type: String,
+      validate(value) {
+        if (value && !validator.isURL(value)) {
+          throw new Error("Invalid Link-Din URL: " + value);
+        }
+      },
+    },
+    gitHubUrl: {
+      type: String,
+      validate(value) {
+        if (value && !validator.isURL(value)) {
+          throw new Error("Invalid GitHub URL: " + value);
+        }
+      },
+    },
   },
   {
     timestamps: true,
   }
 );
-userSchema.index({firstName:1,gender:1})
+userSchema.index({ firstName: 1, gender: 1 });
 userSchema.methods.getJWT = async function () {
   const user = this;
   const token = await jwt.sign({ _id: user._id }, "DEV@TINDER$790", {

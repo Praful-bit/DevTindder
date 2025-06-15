@@ -35,7 +35,7 @@ authRouter.post("/signup", async (req, res) => {
     });
 
     await user.save();
-    res.send("User added successfully");
+    res.send(user);
   } catch (error) {
     res.status(400).send("ERROR : " + error.message);
   }
@@ -44,7 +44,7 @@ authRouter.post("/signup", async (req, res) => {
 authRouter.post("/login", async (req, res) => {
   try {
     const { emailId, password } = req.body;
-
+    
     const user = await User.findOne({ emailId: emailId });
     if (!user) {
       throw new Error("Email Id is not Present in DB..!");
@@ -60,7 +60,7 @@ authRouter.post("/login", async (req, res) => {
         expires: new Date(Date.now() + 8 * 3600000),
       });
 
-      res.send("Login Successfully....!");
+      res.send(user);
     } else {
       throw new Error("Password is not valid");
     }
